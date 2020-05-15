@@ -1,7 +1,7 @@
 package main
 
 import (
-	r "github.com/guimesmo/guiapsq/pkg/core/routes"
+	r "github.com/guimesmo/guiapsq/routes"
 )
 
 func main() {
