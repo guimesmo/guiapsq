@@ -3,40 +3,42 @@ package mongo
 import (
 	"context"
 
-	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Connection implements the connection interface for MongoDB
 type Connection struct {
-	URL        string
-	DBName     string
-	context context
-	client *mongo.Client
+	URL     string
+	DBName  string
+	context context.Context
+	client  *mongo.Client
 }
 
-func NewConnectionn(URL string, DBName string, ctx context) Connection {
+// NewConnection creates a new mongodb connection
+func NewConnection(ctx context.Context, URL string, DBName string) Connection {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
-	return new(Connection{URL: URL, DBName: DBName})
+	return Connection{URL: URL, DBName: DBName, context: ctx}
 
-} 
+}
 
 // Connect sets the db client connection
 func (conn Connection) Connect() error {
 	clientOptions := options.Client().ApplyURI(conn.URL)
-	conn.client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	conn.client = client
 	return err
 }
 
 // GetCollection gets the db collection
 func (conn Connection) GetCollection(name string) (*mongo.Collection, error) {
-	collection := conn.client.Database(conn.client.DBName).Collection(name)
+	collection := conn.client.Database(conn.DBName).Collection(name)
 	return collection, nil
 }
 
-func (conn Connection) Disconect() error {
-	conn.client.Disconnect(context.TODO())
+// Disconnect disconnects the db instance
+func (conn Connection) Disconnect() error {
+	return conn.client.Disconnect(conn.context)
 }
