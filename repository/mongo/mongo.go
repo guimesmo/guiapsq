@@ -16,11 +16,11 @@ type Connection struct {
 }
 
 // NewConnection creates a new mongodb connection
-func NewConnection(ctx context.Context, URL string, DBName string) Connection {
+func NewConnection(ctx context.Context, URL string, DBName string) *Connection {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
-	return Connection{URL: URL, DBName: DBName, context: ctx}
+	return &Connection{URL: URL, DBName: DBName, context: ctx}
 
 }
 

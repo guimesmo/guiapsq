@@ -4,5 +4,5 @@ package repository
 type Connection interface {
 	Connect()
 	Disconnect()
-	GetCollection()
+	GetCollection(name string)
 }

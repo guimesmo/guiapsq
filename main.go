@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/guimesmo/guiapsq/internal/psq/handlers"
 	"github.com/labstack/echo/v4"
 
@@ -20,12 +22,12 @@ func main() {
 	App = echo.New()
 
 	//database connection
-	db = new(mongo.NewConnection{URL: DBURL, DBName: DBName, context: App.GetContext()})
+	db = mongo.NewConnection(context.TODO(), DBURL, DBName)
 	db.Connect()
-	App.GetContext().Set("db", db)
 	defer db.Disconnect()
 
 	// first version routing
+	h := &handlers.Handler{DB: db}
 	App.GET("/api/psq/create", handlers.PsqCreate)
 
 	// start app
