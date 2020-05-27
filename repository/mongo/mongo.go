@@ -32,13 +32,13 @@ func (conn Connection) Connect() error {
 	return err
 }
 
+// Disconnect disconnects the db instance
+func (conn Connection) Disconnect() error {
+	return conn.client.Disconnect(conn.context)
+}
+
 // GetCollection gets the db collection
 func (conn Connection) GetCollection(name string) (*mongo.Collection, error) {
 	collection := conn.client.Database(conn.DBName).Collection(name)
 	return collection, nil
-}
-
-// Disconnect disconnects the db instance
-func (conn Connection) Disconnect() error {
-	return conn.client.Disconnect(conn.context)
 }

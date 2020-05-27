@@ -5,8 +5,4 @@ type Connection interface {
 	Connect()
 	Disconnect()
 	GetCollection()
-
-	Find()
-	Get()
-	Delete() error
 }
