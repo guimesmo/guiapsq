@@ -15,7 +15,7 @@ type Handler struct {
 
 // PSQ Creation endpoint
 func (h *Handler) PsqCreate(c echo.Context) error {
-	psq, err := services.PsqCreate(echo.Context, h.DB)
+	psq, err := services.PsqCreate(c, h.DB)
 
 	if err != nil {
 		return err

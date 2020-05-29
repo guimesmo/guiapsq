@@ -9,6 +9,7 @@ import (
 	"github.com/guimesmo/guiapsq/repository/mongo"
 )
 
+// App the main running app
 var App *echo.Echo
 var db *mongo.Connection
 
@@ -28,7 +29,7 @@ func main() {
 
 	// first version routing
 	h := &handlers.Handler{DB: db}
-	App.GET("/api/psq/create", handlers.PsqCreate)
+	App.GET("/api/psq/create", h.PsqCreate)
 
 	// start app
 	App.Start(":3232")
