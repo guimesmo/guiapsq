@@ -11,7 +11,6 @@ import (
 type Connection struct {
 	URL     string
 	DBName  string
-	context context.Context
 	client  *mongo.Client
 }
 
@@ -20,7 +19,7 @@ func NewConnection(ctx context.Context, URL string, DBName string) *Connection {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
-	return &Connection{URL: URL, DBName: DBName, context: ctx}
+	return &Connection{URL: URL, DBName: DBName}
 
 }
 
@@ -33,8 +32,8 @@ func (conn Connection) Connect() error {
 }
 
 // Disconnect disconnects the db instance
-func (conn Connection) Disconnect() error {
-	return conn.client.Disconnect(conn.context)
+func (conn Connection) Disconnect(c context.Context) error {
+	return conn.client.Disconnect(c)
 }
 
 // GetCollection gets the db collection

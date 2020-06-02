@@ -3,22 +3,26 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/guimesmo/guiapsq/internal/psq/models"
 	"github.com/guimesmo/guiapsq/internal/psq/services"
-	"github.com/guimesmo/guiapsq/repository/mongo"
 	"github.com/labstack/echo/v4"
 )
 
 // Handler handles the requests for PSQ area
 type Handler struct {
-	DB *mongo.Connection
+	service services.PsqService
+}
+
+func NewHandler(service services.PsqService) Handler {
+	return Handler{service}
 }
 
 // PSQ Creation endpoint
 func (h *Handler) PsqCreate(c echo.Context) error {
-	psq, err := services.PsqCreate(c, h.DB)
+	psq := new(models.Psq)
 
-	if err != nil {
-		return err
-	}
+	c.Bind(psq)
+	h.service.Insert(c.Request().Context(), *psq)
+
 	return c.JSON(http.StatusOK, psq)
 }

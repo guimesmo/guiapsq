@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/guimesmo/guiapsq/internal/psq/handlers"
+	"github.com/guimesmo/guiapsq/internal/psq/services"
 	"github.com/labstack/echo/v4"
 
 	"github.com/guimesmo/guiapsq/repository/mongo"
@@ -23,12 +24,15 @@ func main() {
 	App = echo.New()
 
 	//database connection
-	db = mongo.NewConnection(context.TODO(), DBURL, DBName)
+	db = mongo.NewConnection(context.Background(), DBURL, DBName)
 	db.Connect()
-	defer db.Disconnect()
+	defer db.Disconnect(context.TODO())
+
+	psqRepository := mongo.NewPsq(db)
+	psqService := services.NewPsq(psqRepository)
 
 	// first version routing
-	h := &handlers.Handler{DB: db}
+	h := handlers.NewHandler(psqService)
 	App.GET("/api/psq/create", h.PsqCreate)
 
 	// start app
