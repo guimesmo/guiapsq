@@ -9,9 +9,9 @@ import (
 
 // Connection implements the connection interface for MongoDB
 type Connection struct {
-	URL     string
-	DBName  string
-	client  *mongo.Client
+	URL    string
+	DBName string
+	client *mongo.Client
 }
 
 // NewConnection creates a new mongodb connection
@@ -20,11 +20,10 @@ func NewConnection(ctx context.Context, URL string, DBName string) *Connection {
 		ctx = context.TODO()
 	}
 	return &Connection{URL: URL, DBName: DBName}
-
 }
 
 // Connect sets the db client connection
-func (conn Connection) Connect() error {
+func (conn *Connection) Connect() error {
 	clientOptions := options.Client().ApplyURI(conn.URL)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	conn.client = client

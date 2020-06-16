@@ -6,6 +6,8 @@ import (
 	"github.com/guimesmo/guiapsq/internal/psq/handlers"
 	"github.com/guimesmo/guiapsq/internal/psq/services"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 
 	"github.com/guimesmo/guiapsq/repository/mongo"
 )
@@ -22,6 +24,8 @@ const (
 func main() {
 	// app setup
 	App = echo.New()
+	App.Use(middleware.Logger())
+	App.Logger.SetLevel(log.DEBUG)
 
 	//database connection
 	db = mongo.NewConnection(context.Background(), DBURL, DBName)
@@ -33,7 +37,7 @@ func main() {
 
 	// first version routing
 	h := handlers.NewHandler(psqService)
-	App.GET("/api/psq/create", h.PsqCreate)
+	App.POST("/api/psq/create", h.PsqCreate)
 
 	// start app
 	App.Start(":3232")
