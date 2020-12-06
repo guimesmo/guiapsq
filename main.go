@@ -1,11 +1,45 @@
 package main
 
 import (
-	"github.com/guimesmo/guiapsq/routes"
+	"context"
+
+	"github.com/guimesmo/guiapsq/internal/psq/handlers"
+	"github.com/guimesmo/guiapsq/internal/psq/services"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+
+	"github.com/guimesmo/guiapsq/repository/mongo"
 )
 
+// App the main running app
+var App *echo.Echo
+var db *mongo.Connection
 
+const (
+	DBURL  = "mongodb://localhost:27017"
+	DBName = "guiapsq"
+)
 
 func main() {
-	routes.App.Start(":3232")
+	// app setup
+	App = echo.New()
+	App.Use(middleware.Logger())
+	App.Logger.SetLevel(log.DEBUG)
+
+	//database connection
+	db = mongo.NewConnection(context.Background(), DBURL, DBName)
+	db.Connect()
+	defer db.Disconnect(context.TODO())
+
+	psqRepository := mongo.NewPsq(db)
+	psqService := services.NewPsq(psqRepository)
+
+	// first version routing
+	h := handlers.NewHandler(psqService)
+	App.POST("/api/psq/create", h.PsqCreate)
+
+	// start app
+	App.Start(":3232")
+
 }
